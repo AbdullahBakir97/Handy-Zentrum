@@ -1,8 +1,5 @@
 # Handy-Zentrum
 
-
-Here's a professional **README** for your logistics and e-commerce project. This document will serve as both a project overview and a guide for your team members to understand the purpose, structure, and functionality of each component.
-
 ---
 
 # E-commerce and Logistics Management System
