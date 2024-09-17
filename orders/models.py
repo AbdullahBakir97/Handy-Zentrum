@@ -1,5 +1,6 @@
 from django.db import models
 from inventory.models import Product
+from customers.models import Customer
 
 
 class Order(models.Model):
