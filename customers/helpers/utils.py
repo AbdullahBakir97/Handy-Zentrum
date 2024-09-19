@@ -1,5 +1,5 @@
 import re
-from .models import Customer, LoyaltyProgram
+from ..models import Customer, LoyaltyProgram
 
 def format_phone_number(phone_number):
     """Format phone number to international format."""

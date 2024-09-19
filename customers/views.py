@@ -2,6 +2,29 @@ from django.shortcuts import render
 from rest_framework import viewsets, generics
 from .models import Customer, CustomerInteraction, LoyaltyProgram
 from .serializers import CustomerSerializer, CustomerInteractionSerializer, LoyaltyProgramSerializer
+from controllers.customer_controller import CustomerController
+from services.customer_service import CustomerService
+from .forms import CustomerForm
+
+
+def customer_create_view(request):
+    if request.method == 'POST':
+        form = CustomerForm(request.POST)
+        if form.is_valid():
+            customer = CustomerController.create_customer_with_loyalty(form.cleaned_data)
+            # Redirect or render success
+    else:
+        form = CustomerForm()
+    
+    return render(request, 'customer_create.html', {'form': form})
+
+def customer_interaction_view(request, customer_id):
+    if request.method == 'POST':
+        interaction_type = request.POST.get('interaction_type')
+        notes = request.POST.get('notes')
+        CustomerController.handle_customer_interaction(customer_id, interaction_type, notes)
+        # Redirect or render success
+
 
 class CustomerViewSet(viewsets.ModelViewSet):
     queryset = Customer.objects.all().order_by('-date_joined')

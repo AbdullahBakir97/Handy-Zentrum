@@ -16,7 +16,7 @@ class CustomerForm(forms.ModelForm):
     def clean_phone_number(self):
         phone_number = self.cleaned_data.get('phone_number')
         # Assuming format_phone_number is a utility function
-        from .utils import format_phone_number
+        from .helpers.utils import format_phone_number
         return format_phone_number(phone_number)
 
 
