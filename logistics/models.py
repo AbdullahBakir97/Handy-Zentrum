@@ -1,5 +1,6 @@
 from django.db import models
 from inventory.models import Product, Warehouse
+from .settings import LOGISTICS_SETTINGS
 
 class Shipment(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='shipments')
@@ -11,10 +12,7 @@ class Shipment(models.Model):
     tracking_number = models.CharField(max_length=255, unique=True)
     shipping_company = models.CharField(max_length=255, default='DHL')
     status = models.CharField(max_length=50, choices=[
-        ('pending', 'Pending'),
-        ('in_transit', 'In Transit'),
-        ('delivered', 'Delivered'),
-        ('returned', 'Returned'),
+        (status, status.capitalize()) for status in LOGISTICS_SETTINGS['SHIPMENT_STATUSES']
     ], default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
 

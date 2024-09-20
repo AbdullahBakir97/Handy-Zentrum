@@ -1,6 +1,6 @@
 # services/warehouse_service.py
 
-from .models import Warehouse
+from inventory.models import Warehouse
 
 class WarehouseService:
     @staticmethod
