@@ -124,3 +124,76 @@ class Payment(models.Model):
         self.payment_date = timezone.now()
         self.save()
 
+class Cart(models.Model):
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='carts')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True)
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    def calculate_total(self):
+        total = sum(item.total_price for item in self.items.all())
+        self.total_price = total
+        self.save()
+
+    def __str__(self):
+        return f'Cart {self.id} - {self.customer.first_name}'
+
+    class Meta:
+        verbose_name = 'Cart'
+        verbose_name_plural = 'Carts'
+        ordering = ['-created_at']
+
+
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='cart_items')
+    quantity = models.PositiveIntegerField(default=1)
+    price_per_item = models.DecimalField(max_digits=10, decimal_places=2)
+    total_price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def save(self, *args, **kwargs):
+        self.total_price = self.quantity * self.price_per_item
+        super().save(*args, **kwargs)
+        self.cart.calculate_total()
+
+    def __str__(self):
+        return f'{self.quantity} of {self.product.name} in Cart {self.cart.id}'
+
+    class Meta:
+        verbose_name = 'Cart Item'
+        verbose_name_plural = 'Cart Items'
+        unique_together = ('cart', 'product')
+
+
+class CartCoupon(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='coupons')
+    code = models.CharField(max_length=50)
+    discount_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    applied_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Coupon {self.code} for Cart {self.cart.id}'
+
+    class Meta:
+        verbose_name = 'Cart Coupon'
+        verbose_name_plural = 'Cart Coupons'
+
+
+class CartHistory(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='history')
+    status = models.CharField(max_length=50, choices=[
+        ('created', 'Created'),
+        ('updated', 'Updated'),
+        ('checked_out', 'Checked Out'),
+        ('abandoned', 'Abandoned'),
+    ], default='created')
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Cart {self.cart.id} - {self.status} at {self.timestamp}'
+
+    class Meta:
+        verbose_name = 'Cart History'
+        verbose_name_plural = 'Cart Histories'
+        ordering = ['-timestamp']
