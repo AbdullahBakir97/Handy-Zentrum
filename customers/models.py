@@ -1,3 +1,4 @@
+from datetime import timedelta, timezone
 from django.db import models
 from django.contrib.auth.models import User
 from .managers import CustomerManager
@@ -21,6 +22,21 @@ class Customer(models.Model):
         ordering = ['-date_joined']
         verbose_name = 'Customer'
         verbose_name_plural = 'Customers'
+        constraints = [
+            models.UniqueConstraint(fields=['email'], name='unique_email'),
+            models.UniqueConstraint(fields=['phone_number'], name='unique_phone_number'),
+        ]
+
+    def update_loyalty_points(self, points):
+        """Update loyalty points and adjust membership status."""
+        self.loyalty_points += points
+        self.is_loyalty_member = self.loyalty_points > 0
+        self.save()
+
+    def get_full_name(self):
+        """Return the full name of the customer."""
+        return f'{self.first_name} {self.last_name}'
+
     
 class CustomerInteraction(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='customer_interactions')
@@ -39,6 +55,12 @@ class CustomerInteraction(models.Model):
         ordering = ['-interaction_date']
         verbose_name = 'Customer Interaction'
         verbose_name_plural = 'Customer Interactions'
+
+    def was_recent(self):
+        """Check if the interaction was within the last 30 days."""
+        return self.interaction_date >= timezone.now() - timedelta(days=30)
+
+
     
 class Address(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='addresses')
@@ -55,6 +77,12 @@ class Address(models.Model):
     class Meta:
         verbose_name = 'Address'
         verbose_name_plural = 'Addresses'
+        unique_together = ('customer', 'address_type')
+
+    def is_complete(self):
+        """Check if the address has all required fields."""
+        return all([self.address_line_1, self.city, self.country, self.postal_code])
+
         
 class LoyaltyProgram(models.Model):
     customer = models.OneToOneField(Customer, on_delete=models.CASCADE, related_name='loyalty_program')
@@ -71,4 +99,14 @@ class LoyaltyProgram(models.Model):
     class Meta:
         verbose_name = 'Loyalty Program'
         verbose_name_plural = 'Loyalty Programs'
+
+    def update_tier(self):
+        """Update loyalty tier based on points."""
+        if self.points < 100:
+            self.tier = 'bronze'
+        elif self.points < 500:
+            self.tier = 'silver'
+        else:
+            self.tier = 'gold'
+        self.save()
 
