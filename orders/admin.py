@@ -1,6 +1,90 @@
 from django.contrib import admin
-from django.contrib import admin
-from .models import Order, OrderItem, Payment
+from django.urls import path
+from django.template.response import TemplateResponse
+from .models import Order, OrderItem, Payment, RepairOrder
+from .services import RepairCalculationService
+from django.utils.html import format_html
+from .filters import UnpaidFilter, CompletedFilter, SentToOtherShopFilter  # Ensure these are imported
+
+@admin.register(RepairOrder)
+class RepairOrderAdmin(admin.ModelAdmin):
+    list_display = ['id', 'customer_name', 'device_name', 'status', 'total_price', 'expenses', 'profit', 'created_at', 'completion_time']
+    list_filter = [UnpaidFilter, CompletedFilter, SentToOtherShopFilter, 'status', 'created_at', 'shop', 'device_type']
+    search_fields = ['customer_name', 'device_name', 'id', 'customer_contact']
+    readonly_fields = ['profit', 'created_at']
+    actions = ['mark_as_completed', 'mark_as_awaiting_pickup', 'mark_as_paid']
+    ordering = ['-created_at']
+
+    # Custom daily report view included in changelist view
+    def changelist_view(self, request, extra_context=None):
+        # Add a button to link to the daily report
+        extra_context = extra_context or {}
+        extra_context['daily_report_button'] = format_html(
+            '<a class="button" href="{}">Go to Daily Report</a>',
+            "/admin/orders/repairorder/daily-report/"
+        )
+
+        # Fetch the daily totals from the service (optional)
+        daily_totals = RepairCalculationService.calculate_daily_totals()
+        extra_context.update({
+            'daily_totals': daily_totals,
+            'total_orders': daily_totals['total_orders'],
+            'total_price': daily_totals['total_price'],
+            'total_expenses': daily_totals['total_expenses'],
+            'total_profit': daily_totals['total_profit'],
+            'profit_owner': daily_totals['profit_owner'],
+            'profit_worker': daily_totals['profit_worker'],
+            'unpaid_orders_count': daily_totals['unpaid_orders_count'],
+            'unpaid_total': daily_totals['unpaid_total'],
+        })
+
+        return super().changelist_view(request, extra_context=extra_context)
+
+    # Add the custom URL for the daily report page (if needed)
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path('daily-report/', self.admin_site.admin_view(self.daily_report_view), name='daily-report'),
+        ]
+        return custom_urls + urls
+
+    def daily_report_view(self, request):
+        daily_totals = RepairCalculationService.calculate_daily_totals()
+
+        context = dict(
+            self.admin_site.each_context(request),
+            daily_totals=daily_totals,
+            total_orders=daily_totals['total_orders'],
+            total_price=daily_totals['total_price'],
+            total_expenses=daily_totals['total_expenses'],
+            total_profit=daily_totals['total_profit'],
+            profit_owner=daily_totals['profit_owner'],
+            profit_worker=daily_totals['profit_worker'],
+            unpaid_orders_count=daily_totals['unpaid_orders_count'],
+            unpaid_total=daily_totals['unpaid_total'],
+        )
+
+        return TemplateResponse(request, "admin/daily_report.html", context)
+
+    def mark_as_completed(self, request, queryset):
+        updated = queryset.update(status='completed')
+        self.message_user(request, f'{updated} orders marked as Completed.')
+    mark_as_completed.short_description = 'Mark selected orders as Completed'
+
+    def mark_as_awaiting_pickup(self, request, queryset):
+        updated = queryset.update(status='customer_pickup')
+        self.message_user(request, f'{updated} orders marked as Awaiting Pickup.')
+    mark_as_awaiting_pickup.short_description = 'Mark selected orders as Awaiting Pickup'
+
+    def mark_as_paid(self, request, queryset):
+        updated = queryset.update(status='paid', payment_received=True)
+        self.message_user(request, f'{updated} orders marked as Paid.')
+    mark_as_paid.short_description = 'Mark selected orders as Paid'
+
+
+
+
+    
 
 
 class OrderItemInline(admin.TabularInline):

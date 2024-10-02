@@ -1,0 +1,25 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<div class="section">
+    <h2>Daily Workflow Summary</h2>
+    <p><strong>Total Orders:</strong> {{ total_orders }}</p>
+    <p><strong>Total Price:</strong> {{ total_price }}€</p>
+    <p><strong>Total Expenses:</strong> {{ total_expenses }}€</p>
+    <p><strong>Total Profit:</strong> {{ total_profit }}€</p>
+</div>
+
+<div class="section">
+    <h2>Profit Split</h2>
+    <p><strong>Profit for Owner:</strong> {{ profit_owner }}€</p>
+    <p><strong>Profit for Worker:</strong> {{ profit_worker }}€</p>
+</div>
+
+<div class="section">
+    <h2>Unpaid Orders</h2>
+    <p><strong>Number of Unpaid Orders:</strong> {{ unpaid_orders_count }}</p>
+    <p><strong>Total Unpaid Amount:</strong> {{ unpaid_total }}€</p>
+</div>
+
+{{ block.super }}
+{% endblock %}

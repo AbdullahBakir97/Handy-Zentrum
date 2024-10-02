@@ -1,11 +1,102 @@
 from django.db import models
-from inventory.models import Product
+from inventory.models import Product, Warehouse
 from customers.models import Customer
 from django.utils import timezone
 from decimal import Decimal
 from django.core.validators import MinValueValidator
 from django.urls import reverse
+from .managers import RepairOrderManager
 
+class RepairOrder(models.Model):
+    DEVICE_TYPES = [
+        ('phone', 'Phone'),
+        ('tablet', 'Tablet'),
+        ('laptop', 'Laptop'),
+        ('other', 'Other'),
+    ]
+
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('in_progress', 'In Progress'),
+        ('completed', 'Completed'),
+        ('customer_pickup', 'Awaiting Pickup'),
+        ('paid', 'Paid'),
+        ('sent_to_other_shop', 'Sent to Other Shop'),
+    ]
+
+    shop = models.ForeignKey(Warehouse, on_delete=models.CASCADE, related_name="repair_orders")
+    device_type = models.CharField(max_length=50, choices=DEVICE_TYPES)
+    device_name = models.CharField(max_length=100)
+    issue = models.TextField()
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal('0.00'))])
+    expenses = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal('0.00'))])
+    profit = models.DecimalField(max_digits=10, decimal_places=2, default=0, editable=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    completion_time = models.DateTimeField(null=True, blank=True)
+    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='pending')
+    details = models.TextField(blank=True, null=True)
+    customer_name = models.CharField(max_length=100, blank=True)
+    customer_contact = models.CharField(max_length=50, blank=True)
+    payment_received = models.BooleanField(default=False)
+    payment_pending_reason = models.CharField(max_length=100, null=True, blank=True)  # e.g., "Awaiting Customer Pickup" or "Sent to Other Shop"
+    objects = RepairOrderManager()
+    class Meta:
+        ordering = ['-created_at']
+
+    
+    def calculate_profit(self):
+        if self.total_cost is not None and self.price is not None:
+            self.profit = self.price - self.total_cost
+        else:
+            self.profit = 0
+
+    def save(self, *args, **kwargs):
+        self.calculate_profit()
+        super().save(*args, **kwargs)
+
+
+    def calculate_profit(self):
+        """Calculate profit as total price minus expenses."""
+        if self.expenses is not None and self.total_price is not None:
+            self.profit = self.total_price - self.expenses
+        else:
+            self.profit = 0
+
+
+    def is_paid(self):
+        """Check if the order is marked as paid."""
+        return self.status == 'paid'
+
+    def is_sent_to_other_shop(self):
+        """Check if the order is sent to another shop."""
+        return self.status == 'sent_to_other_shop'
+
+    def is_completed(self):
+        """Check if the repair is completed but not yet paid or picked up."""
+        return self.status == 'completed' or self.status == 'customer_pickup'
+
+    def mark_payment_pending(self, reason):
+        """Mark this order as having pending payment."""
+        self.payment_received = False
+        self.payment_pending_reason = reason
+        self.save()
+
+    def mark_paid(self):
+        """Mark the order as paid and payment received."""
+        self.payment_received = True
+        self.payment_pending_reason = None
+        self.save()
+    
+    def save(self, *args, **kwargs):
+        """Override the save method to ensure profit is calculated before saving."""
+        self.calculate_profit()
+        super().save(*args, **kwargs)
+                
+    def __str__(self):
+        return f"{self.device_name} - {self.issue} ({self.status})"
+    
+
+        
 class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='orders')
     order_date = models.DateTimeField(auto_now_add=True)
