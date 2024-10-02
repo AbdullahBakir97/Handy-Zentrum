@@ -43,18 +43,6 @@ class RepairOrder(models.Model):
     class Meta:
         ordering = ['-created_at']
 
-    
-    def calculate_profit(self):
-        if self.total_cost is not None and self.price is not None:
-            self.profit = self.price - self.total_cost
-        else:
-            self.profit = 0
-
-    def save(self, *args, **kwargs):
-        self.calculate_profit()
-        super().save(*args, **kwargs)
-
-
     def calculate_profit(self):
         """Calculate profit as total price minus expenses."""
         if self.expenses is not None and self.total_price is not None:
