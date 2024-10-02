@@ -20,8 +20,7 @@ class RepairOrderManager(models.Manager):
         return RepairOrderQuerySet(self.model, using=self._db)
         
     def created_today(self):
-        today = timezone.now().date()  # Get today's date
-        return self.filter(created_at__date=today)  # Filter orders created today
+        return self.get_queryset().created_today()
 
     def daily_report(self):
         return self.get_queryset().created_today().total_calculations()
