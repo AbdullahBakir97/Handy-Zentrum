@@ -1,7 +1,8 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils import timezone
-from inventory.models import Product, Warehouse
+from inventory.models import Warehouse
+from products.models import Product
 from .settings import LOGISTICS_SETTINGS
 
 class Shipment(models.Model):

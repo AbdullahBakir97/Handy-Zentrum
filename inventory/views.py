@@ -1,15 +1,12 @@
 from django.shortcuts import render
 from rest_framework import viewsets
-from .models import Product, InventoryItem, Warehouse, StockAdjustment, InventoryTransfer
+from .models import InventoryItem, Warehouse, StockAdjustment, InventoryTransfer
 from .serializers import (
-    ProductSerializer, InventoryItemSerializer, WarehouseSerializer, 
+    InventoryItemSerializer, WarehouseSerializer, 
     StockAdjustmentSerializer, InventoryTransferSerializer
 )
 from .services import StockAdjustmentService, InventoryTransferService
 
-class ProductViewSet(viewsets.ModelViewSet):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
 
 class WarehouseViewSet(viewsets.ModelViewSet):
     queryset = Warehouse.objects.all()

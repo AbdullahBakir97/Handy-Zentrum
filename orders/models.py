@@ -1,5 +1,6 @@
 from django.db import models
-from inventory.models import Product, Warehouse
+from inventory.models import Warehouse
+from products.models import Product
 from customers.models import Customer
 from django.utils import timezone
 from decimal import Decimal

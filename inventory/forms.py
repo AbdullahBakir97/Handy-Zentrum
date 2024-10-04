@@ -1,10 +1,6 @@
 from django import forms
-from .models import Product, StockAdjustment, InventoryTransfer
+from .models import StockAdjustment, InventoryTransfer
 
-class ProductForm(forms.ModelForm):
-    class Meta:
-        model = Product
-        fields = ['name', 'description', 'sku', 'category', 'price']
 
 class StockAdjustmentForm(forms.ModelForm):
     class Meta:

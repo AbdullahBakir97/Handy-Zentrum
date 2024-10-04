@@ -1,5 +1,5 @@
 from django.db import models
-from inventory.models import Product
+from products.models import Product
 
 class SalesReport(models.Model):
     report_date = models.DateField(auto_now_add=True)

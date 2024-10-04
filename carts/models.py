@@ -1,5 +1,5 @@
 from django.db import models
-from inventory.models import Product
+from products.models import Product
 from customers.models import Customer
 from django.utils import timezone
 from datetime import timedelta

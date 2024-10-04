@@ -1,17 +1,5 @@
 from django.contrib import admin
-from .models import Category, Product, Warehouse, InventoryItem, StockAdjustment, InventoryTransfer
-
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'parent')
-    search_fields = ('name',)
-    list_filter = ('parent',)
-
-class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'sku', 'category', 'price', 'created_at', 'updated_at')
-    search_fields = ('name', 'sku')
-    list_filter = ('category',)
-    ordering = ('-created_at',)
-    prepopulated_fields = {"sku": ("name",)}
+from .models import Warehouse, InventoryItem, StockAdjustment, InventoryTransfer
 
 class InventoryItemInline(admin.TabularInline):
     model = InventoryItem
@@ -37,8 +25,6 @@ class InventoryTransferAdmin(admin.ModelAdmin):
     search_fields = ('product__name', 'from_location__name', 'to_location__name', 'status')
     list_filter = ('status', 'created_at')
 
-admin.site.register(Category, CategoryAdmin)
-admin.site.register(Product, ProductAdmin)
 admin.site.register(Warehouse, WarehouseAdmin)
 admin.site.register(InventoryItem, InventoryItemAdmin)
 admin.site.register(StockAdjustment, StockAdjustmentAdmin)
