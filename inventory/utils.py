@@ -3,8 +3,6 @@ import random
 import string
 
 
-def generate_sku():
-    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
 
 def calculate_stock_value(inventory_items):
     return sum(item.quantity * item.product.price for item in inventory_items)
