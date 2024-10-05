@@ -6,7 +6,7 @@ from django.utils import timezone
 from decimal import Decimal
 from django.core.validators import MinValueValidator
 from django.urls import reverse
-from .managers import RepairOrderManager
+from .managers import RepairOrderManager, OrderManager
 
 class RepairOrder(models.Model):
     DEVICE_TYPES = [
@@ -24,7 +24,8 @@ class RepairOrder(models.Model):
         ('paid', 'Paid'),
         ('sent_to_other_shop', 'Sent to Other Shop'),
     ]
-
+    
+    code = models.CharField(max_length=12, unique=True, blank=True, null=True)
     shop = models.ForeignKey(Warehouse, on_delete=models.CASCADE, related_name="repair_orders")
     device_type = models.CharField(max_length=50, choices=DEVICE_TYPES)
     device_name = models.CharField(max_length=100)
@@ -82,7 +83,7 @@ class RepairOrder(models.Model):
         super().save(*args, **kwargs)
                 
     def __str__(self):
-        return f"{self.device_name} - {self.issue} ({self.status})"
+        return f"{self.device_name} - {self.issue} ({self.status}) - {self.code}"
     
 
         
@@ -103,7 +104,8 @@ class Order(models.Model):
         ('unpaid', 'Unpaid'),
         ('refunded', 'Refunded'),
     ], default='unpaid')
-
+    objects = OrderManager
+    
     class Meta:
         ordering = ['-order_date']
         verbose_name = 'Order'

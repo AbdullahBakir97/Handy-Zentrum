@@ -1,19 +1,26 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, reverse
 from django.template.response import TemplateResponse
 from .models import Order, OrderItem, Payment, RepairOrder
 from .services import RepairCalculationService
 from django.utils.html import format_html
-from .filters import UnpaidFilter, CompletedFilter, SentToOtherShopFilter  # Ensure these are imported
+from .filters import UnpaidFilter, CompletedFilter, SentToOtherShopFilter  
 
 @admin.register(RepairOrder)
 class RepairOrderAdmin(admin.ModelAdmin):
-    list_display = ['id', 'customer_name', 'device_name', 'status', 'total_price', 'expenses', 'profit', 'created_at', 'completion_time']
+    list_display = ['id', 'code', 'customer_name', 'device_name', 'status', 'total_price', 'expenses', 'profit', 'created_at', 'completion_time']
     list_filter = [UnpaidFilter, CompletedFilter, SentToOtherShopFilter, 'status', 'created_at', 'shop', 'device_type']
     search_fields = ['customer_name', 'device_name', 'id', 'customer_contact']
     readonly_fields = ['profit', 'created_at']
-    actions = ['mark_as_completed', 'mark_as_awaiting_pickup', 'mark_as_paid']
+    actions = ['mark_as_completed', 'mark_as_awaiting_pickup', 'mark_as_paid', 'print_receipt']
     ordering = ['-created_at']
+
+    def print_receipt(self, request, queryset):
+        for order in queryset:
+            url = reverse('repair_receipt', args=[order.pk])
+            return format_html('<a class="button" href="{}">Print Receipt</a>', url)
+    
+    print_receipt.short_description = 'Print Repair Receipt'
 
     # Custom daily report view included in changelist view
     def changelist_view(self, request, extra_context=None):
