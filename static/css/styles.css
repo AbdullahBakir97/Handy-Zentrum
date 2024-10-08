@@ -1,0 +1,152 @@
+/* Reset some basic styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+/* Navbar styling */
+.navbar {
+    display: flex;
+    justify-content: space-around;
+    background-color: #333;
+    padding: 1rem;
+}
+
+.navbar a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.navbar a:hover {
+    background-color: #555;
+}
+
+/* Main container and layout */
+.container {
+    display: flex;
+    min-height: 100vh;
+    margin: 20px auto;
+    max-width: 1200px;
+}
+
+.sidebar {
+    flex: 1;
+    background-color: #fff;
+    padding: 2rem;
+    border-right: 1px solid #ddd;
+}
+
+main {
+    flex: 3;
+    padding: 2rem;
+    background-color: #fff;
+}
+
+/* Footer styling */
+footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 1rem 0;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+/* Button styling */
+.btn {
+    padding: 0.7rem 1.5rem;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #218838;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}
+
+/* Table styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th, td {
+    padding: 1rem;
+    text-align: left;
+}
+
+th {
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+td {
+    background-color: #fff;
+}
+
+/* Orders page specific */
+.order-details, .order-items-table {
+    margin-bottom: 2rem;
+}
+
+.order-items-table th, .order-items-table td {
+    text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        border-right: none;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .navbar {
+        flex-direction: column;
+    }
+
+    .navbar a {
+        margin-bottom: 10px;
+    }
+
+    footer {
+        position: static;
+    }
+}

@@ -96,7 +96,7 @@ class ShipmentTrackingView(View):
 class OrderFulfillmentView(View):
     def post(self, request, order_id, *args, **kwargs):
         try:
-            FulfillmentController().process_order_fulfillment(order_id)
+            FulfillmentController().process_fulfillment(order_id)
             messages.success(request, "Order fulfilled successfully!")
         except Exception as e:
             messages.error(request, str(e))

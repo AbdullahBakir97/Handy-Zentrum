@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Payment for Order #{{ order.id }}{% endblock %}
+
+{% block content %}
+<h1>Payment for Order #{{ order.id }}</h1>
+
+<p><strong>Total Due:</strong> ${{ order.total }}</p>
+
+<form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="payment_method">Select Payment Method:</label>
+        <select id="payment_method" name="payment_method" class="form-control">
+            <option value="credit_card">Credit Card</option>
+            <option value="paypal">PayPal</option>
+            <option value="bank_transfer">Bank Transfer</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="card_number">Card Number:</label>
+        <input type="text" id="card_number" name="card_number" class="form-control" required>
+    </div>
+
+    <div class="form-group">
+        <label for="expiry_date">Expiry Date:</label>
+        <input type="text" id="expiry_date" name="expiry_date" class="form-control" placeholder="MM/YY" required>
+    </div>
+
+    <div class="form-group">
+        <label for="cvv">CVV:</label>
+        <input type="text" id="cvv" name="cvv" class="form-control" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit Payment</button>
+</form>
+
+<a href="{% url 'order_list' %}" class="btn btn-secondary">Cancel</a>
+{% endblock %}
+

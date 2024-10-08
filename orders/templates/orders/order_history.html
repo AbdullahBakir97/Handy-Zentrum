@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Order History{% endblock %}
+
+{% block content %}
+<h1>Order History</h1>
+
+{% if order_history %}
+<table class="order-history-table">
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Total</th>
+            <th>Details</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in order_history %}
+        <tr>
+            <td>{{ order.id }}</td>
+            <td>{{ order.created_at|date:"F j, Y" }}</td>
+            <td>{{ order.status }}</td>
+            <td>${{ order.total }}</td>
+            <td><a href="{% url 'order_detail' order.id %}" class="btn btn-primary">View</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No orders found.</p>
+{% endif %}
+
+{% endblock %}

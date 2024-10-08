@@ -53,6 +53,23 @@ class PaymentController:
         self.payment_service.refund_payment(order_id)
         return {'status': 'Payment refunded successfully'}
 
+class PaymentController:
+    def __init__(self):
+        self.payment_service = PaymentService()
+        self.order_service = OrderService()
+        self.caching_service = CachingService()
+
+    def process_payment(self, order_id, payment_method):
+        self.payment_service.process_payment(order_id, payment_method)
+        self.caching_service.invalidate_cache(order_id)
+
+    def refund_payment(self, order_id):
+        self.payment_service.refund_payment(order_id)
+        self.caching_service.invalidate_cache(order_id)
+
+    def validate_payment(self, payment_data):
+        return self.payment_service.validate_payment_method(payment_data)
+
 
 class ShippingController:
     def __init__(self):
@@ -65,11 +82,27 @@ class ShippingController:
     def track_shipment(self, order_id):
         tracking_info = self.shipping_service.track_shipment(order_id)
         return tracking_info
+    
+    def calculate_shipping(self, order_items, destination):
+        return self.shipping_service.calculate_shipping(order_items, destination)
 
     def cancel_shipment(self, shipment_id):
         self.shipping_service.cancel_shipment(shipment_id)
         return {'status': 'Shipment canceled successfully'}
 
+class FulfillmentController:
+    def __init__(self):
+        self.fulfillment_service = FulfillmentService()
+        self.shipping_controller = ShippingController()
+
+    def process_fulfillment(self, order_id):
+        self.fulfillment_service.process_order_fulfillment(order_id)
+        # Handle any additional logic for shipment preparation
+        order = self.fulfillment_service.process_order_fulfillment(order_id)
+        return self.shipping_controller.create_shipment(order.id, order.shipping_address, 'standard')
+
+    def update_fulfillment_status(self, order_id, status):
+        self.fulfillment_service.update_fulfillment_status(order_id)
 
 class ReportingController:
     def __init__(self):

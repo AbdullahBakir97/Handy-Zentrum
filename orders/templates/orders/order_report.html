@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Order Report{% endblock %}
+
+{% block content %}
+<h1>Order Report</h1>
+
+<div class="report-section">
+    <h2>Order Information</h2>
+    <p><strong>Order ID:</strong> {{ order_report.order_id }}</p>
+    <p><strong>Date:</strong> {{ order_report.created_at|date:"F j, Y" }}</p>
+    <p><strong>Status:</strong> {{ order_report.status }}</p>
+    <p><strong>Total:</strong> ${{ order_report.total }}</p>
+</div>
+
+<div class="report-section">
+    <h2>Customer Information</h2>
+    <p><strong>Name:</strong> {{ order_report.customer.name }}</p>
+    <p><strong>Email:</strong> {{ order_report.customer.email }}</p>
+    <p><strong>Phone:</strong> {{ order_report.customer.phone }}</p>
+</div>
+
+<div class="report-section">
+    <h2>Order Items</h2>
+    <table class="order-items-table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order_report.items %}
+            <tr>
+                <td>{{ item.product_name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>${{ item.price }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="report-section">
+    <h2>Payment Information</h2>
+    <p><strong>Payment Method:</strong> {{ order_report.payment_method }}</p>
+    <p><strong>Payment Status:</strong> {{ order_report.payment_status }}</p>
+</div>
+
+{% endblock %}
