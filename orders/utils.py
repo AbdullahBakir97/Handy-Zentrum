@@ -158,7 +158,7 @@ def send_order_cancellation_alert(order):
 def generate_order_report(order):
     """Generates a detailed report for an order."""
     report = f"Order Report for Order {order.id}\n"
-    report += f"Customer: {order.customer.name}\n"
+    report += f"Customer: {order.customer.user}\n"
     report += f"Total Amount: {order.total_amount}\n"
     for item in order.items.all():
         report += f"{item.product.name}: {item.quantity} x {item.price_per_item} = {item.total_price}\n"
@@ -168,7 +168,7 @@ def format_order_summary(order):
     """Formats order data into a summary."""
     summary = {
         "order_id": order.id,
-        "customer": order.customer.name,
+        "customer": order.customer.user,
         "items": [{
             "product": item.product.name,
             "quantity": item.quantity,

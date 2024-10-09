@@ -20,9 +20,9 @@
         {% for order in order_history %}
         <tr>
             <td>{{ order.id }}</td>
-            <td>{{ order.created_at|date:"F j, Y" }}</td>
+            <td>{{ order.order_date|date:"F j, Y" }}</td>
             <td>{{ order.status }}</td>
-            <td>${{ order.total }}</td>
+            <td>${{ order.total_amount }}</td>
             <td><a href="{% url 'order_detail' order.id %}" class="btn btn-primary">View</a></td>
         </tr>
         {% endfor %}

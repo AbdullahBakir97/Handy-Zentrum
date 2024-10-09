@@ -6,9 +6,9 @@
 <h1>Order #{{ order.id }} Details</h1>
 
 <div class="order-details">
-    <p><strong>Date:</strong> {{ order.created_at|date:"F j, Y" }}</p>
+    <p><strong>Date:</strong> {{ order.order_date|date:"F j, Y" }}</p>
     <p><strong>Status:</strong> {{ order.status }}</p>
-    <p><strong>Total:</strong> ${{ order.total }}</p>
+    <p><strong>Total:</strong> ${{ order.total_amount }}</p>
 </div>
 
 <h2>Items</h2>
@@ -21,7 +21,7 @@
         </tr>
     </thead>
     <tbody>
-        {% for item in order.items %}
+        {% for item in order.items.all %}
         <tr>
             <td>{{ item.product.name }}</td>
             <td>{{ item.quantity }}</td>
@@ -32,7 +32,7 @@
 </table>
 
 <div class="order-actions">
-    <a href="{% url 'create_shipment' order.id %}" class="btn btn-primary">Create Shipment</a>
+    <a href="#" class="btn btn-primary">Create Shipment</a>
 </div>
 
 {% endblock %}
