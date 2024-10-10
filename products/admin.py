@@ -7,11 +7,10 @@ class CategoryAdmin(admin.ModelAdmin):
     list_filter = ('parent',)
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'sku', 'category', 'price', 'created_at', 'updated_at')
-    search_fields = ('name', 'sku')
+    list_display = ('name',  'category', 'base_price', 'created_at', 'updated_at')
+    search_fields = ('name', )
     list_filter = ('category',)
     ordering = ('-created_at',)
-    prepopulated_fields = {"sku": ("name",)}
 
 
 admin.site.register(Category, CategoryAdmin)
