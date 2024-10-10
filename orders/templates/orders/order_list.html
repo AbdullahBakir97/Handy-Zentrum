@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Your Orders{% endblock %}
+
+{% block content %}
+<h1>Your Orders</h1>
+
+<table class="order-table">
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Total</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in orders %}
+        <tr>
+            <td>{{ order.id }}</td>
+            <td>{{ order.created_at|date:"F j, Y" }}</td>
+            <td>{{ order.status }}</td>
+            <td>${{ order.total }}</td>
+            <td>
+                <a href="{% url 'order_detail' order.id %}" class="btn btn-primary">View Details</a>
+                <form method="post" action="{% url 'cancel_order' order.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Cancel</button>
+                </form>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5">You have no orders.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

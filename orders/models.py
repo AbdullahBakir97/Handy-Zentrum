@@ -6,7 +6,7 @@ from django.utils import timezone
 from decimal import Decimal
 from django.core.validators import MinValueValidator
 from django.urls import reverse
-from .managers import RepairOrderManager
+from .managers import RepairOrderManager, OrderManager
 
 class RepairOrder(models.Model):
     DEVICE_TYPES = [
@@ -24,7 +24,8 @@ class RepairOrder(models.Model):
         ('paid', 'Paid'),
         ('sent_to_other_shop', 'Sent to Other Shop'),
     ]
-
+    
+    code = models.CharField(max_length=12, unique=True, blank=True, null=True)
     shop = models.ForeignKey(Warehouse, on_delete=models.CASCADE, related_name="repair_orders")
     device_type = models.CharField(max_length=50, choices=DEVICE_TYPES)
     device_name = models.CharField(max_length=100)
@@ -82,7 +83,7 @@ class RepairOrder(models.Model):
         super().save(*args, **kwargs)
                 
     def __str__(self):
-        return f"{self.device_name} - {self.issue} ({self.status})"
+        return f"{self.device_name} - {self.issue} ({self.status}) - {self.code}"
     
 
         
@@ -96,14 +97,20 @@ class Order(models.Model):
         ('delivered', 'Delivered'),
         ('canceled', 'Canceled'),
     ], default='pending')
-    total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    total_amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(Decimal('0.00'))],
+        default=Decimal('0.00')
+    )
     shipping_address = models.CharField(max_length=255)
     payment_status = models.CharField(max_length=50, choices=[
         ('paid', 'Paid'),
         ('unpaid', 'Unpaid'),
         ('refunded', 'Refunded'),
     ], default='unpaid')
-
+    objects = OrderManager
+    
     class Meta:
         ordering = ['-order_date']
         verbose_name = 'Order'
@@ -113,33 +120,39 @@ class Order(models.Model):
         ]
 
     def __str__(self):
-        return f'Order {self.id} - {self.customer.name}'
+        return f'Order {self.id} - {self.customer.user}'
+    
+    # def save(self, *args, **kwargs):
+    #     # Ensure total_amount is calculated before saving if not already set
+    #     if not self.pk and self.total_amount == Decimal('0.00'):
+    #         self.total_amount = self.calculate_total()
+    #     super().save(*args, **kwargs)
 
     def update_status(self, new_status):
         """Update the order status."""
-        if new_status not in ['pending', 'processed', 'shipped', 'delivered', 'canceled']:
+        if new_status not in dict(self._meta.get_field('status').choices):
             raise ValueError(f"Invalid status: {new_status}")
         self.status = new_status
-        self.save()
+        self.save(update_fields=['status'])
 
     def cancel_order(self):
         """Cancel the order if it has not been shipped or delivered."""
         if self.status in ['shipped', 'delivered']:
             raise ValueError("Cannot cancel an order after it has been shipped or delivered.")
         self.status = 'canceled'
-        self.save()
+        self.save(update_fields=['status'])
 
     def calculate_total(self):
-        """Calculate and update the total amount of the order based on its items."""
-        self.total_amount = sum(item.total_price for item in self.items.all())
-        self.save()
+        """Calculate the total amount for the order based on its items."""
+        total = sum(item.total_price for item in self.items.all())
+        return total
 
     def refund(self):
         """Mark the order as refunded if it's paid."""
         if self.payment_status == 'paid':
             self.payment_status = 'refunded'
             self.status = 'canceled'
-            self.save()
+            self.save(update_fields=['payment_status', 'status'])
         else:
             raise ValueError("Only paid orders can be refunded.")
 
@@ -147,9 +160,9 @@ class Order(models.Model):
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='order_items')
-    quantity = models.IntegerField()
+    quantity = models.PositiveIntegerField()
     price_per_item = models.DecimalField(max_digits=10, decimal_places=2)
-    total_price = models.DecimalField(max_digits=10, decimal_places=2)
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     class Meta:
         ordering = ['order']
@@ -162,10 +175,14 @@ class OrderItem(models.Model):
     def __str__(self):
         return f'{self.quantity} of {self.product.name} for Order {self.order.id}'
 
+    def save(self, *args, **kwargs):
+        self.total_price = self.quantity * self.price_per_item
+        super().save(*args, **kwargs)
+
     def calculate_total_price(self):
         """Calculate the total price for this item."""
         self.total_price = self.quantity * self.price_per_item
-        self.save()
+        self.save(update_fields=['total_price'])
 
     
 class Payment(models.Model):

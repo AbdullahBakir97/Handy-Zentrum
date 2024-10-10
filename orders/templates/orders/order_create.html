@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Create a New Order{% endblock %}
+
+{% block content %}
+<h1>Create a New Order</h1>
+
+<form method="POST" action="{% url 'order_create' %}">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="customer_id">Customer ID</label>
+        <input type="text" id="customer_id" name="customer_id" class="form-control" placeholder="Enter customer ID" required>
+    </div>
+
+    <div class="form-group">
+        <label for="product_id">Product</label>
+        <select id="product_id" name="product_id" class="form-control">
+            <!-- Assuming you provide a list of products in the view context -->
+            {% for product in products %}
+            <option value="{{ product.id }}">{{ product.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="quantity">Quantity</label>
+        <input type="number" id="quantity" name="quantity" class="form-control" min="1" placeholder="Enter quantity" required>
+    </div>
+
+    <div class="form-group">
+        <label for="shipping_address">Shipping Address</label>
+        <textarea id="shipping_address" name="shipping_address" class="form-control" rows="3" placeholder="Enter shipping address" required></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-success">Create Order</button>
+</form>
+
+{% endblock %}
