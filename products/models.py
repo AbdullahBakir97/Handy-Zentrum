@@ -64,11 +64,19 @@ class Product(models.Model):
     name = models.CharField(max_length=150)
     subtitle = models.TextField(max_length=500)
     description = models.TextField(blank=True, null=True, max_length=100000)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products_in_category')
-    brand = models.ForeignKey(Brand, on_delete=models.SET_NULL, null=True, blank=True)
+    category = models.ForeignKey(Category, 
+            on_delete=models.CASCADE, 
+            related_name='products_in_category'
+    )
+    brand = models.ForeignKey(Brand, 
+        on_delete=models.SET_NULL,
+        null=True, blank=True, 
+        related_name='products_brands'
+    )
     base_price = models.DecimalField(max_digits=10, decimal_places=2)
     flag = models.CharField(_('Flag'),max_length=10,choices=FLAG_TYPES)
     slug = models.SlugField(unique=True, max_length=255, blank=True, null=True)
+    sku = models.CharField(max_length=15, unique=True, blank=True, null=True)
     tags = TaggableManager()
     image = models.ImageField(upload_to='product_images/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -104,6 +112,13 @@ class Product(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
+            # Check if slug already exists
+            unique_slug = self.slug
+            counter = 1
+            while Product.objects.filter(slug=unique_slug).exists():
+                unique_slug = f"{self.slug}-{counter}"
+                counter += 1
+            self.slug = unique_slug
         super().save(*args, **kwargs)
 
 class ProductImages(models.Model):
@@ -115,7 +130,6 @@ class ProductImages(models.Model):
     
 class ProductVariant(models.Model):
     product = models.ForeignKey(Product, related_name='variants', on_delete=models.CASCADE)
-    sku = models.CharField(max_length=12, unique=True)
     color = models.CharField(max_length=50, blank=True, null=True)
     size = models.CharField(max_length=50, blank=True, null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
