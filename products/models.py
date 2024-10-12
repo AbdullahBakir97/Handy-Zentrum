@@ -110,16 +110,46 @@ class Product(models.Model):
         self.save()
         
     def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.name)
-            # Check if slug already exists
-            unique_slug = self.slug
-            counter = 1
-            while Product.objects.filter(slug=unique_slug).exists():
-                unique_slug = f"{self.slug}-{counter}"
-                counter += 1
-            self.slug = unique_slug
+        regenerate_sku = False
+
+        # If the product already exists in the database
+        if self.pk and Product.objects.filter(pk=self.pk).exists():
+            old_product = Product.objects.get(pk=self.pk)
+
+            # Check if the name has changed
+            if old_product.name != self.name:
+                self.slug = slugify(self.name)
+                from .utils import BaseSKUGenerator
+                sku_generator = BaseSKUGenerator()
+                self.sku = sku_generator.generate_sku(self)
+                regenerate_sku = True  # Flag that SKU has been regenerated
+
+        else:
+            # First-time creation, generate slug and SKU if not set
+            if not self.slug:
+                self.slug = slugify(self.name)
+            if not self.sku:
+                from .utils import BaseSKUGenerator
+                sku_generator = BaseSKUGenerator()
+                self.sku = sku_generator.generate_sku(self)
+
         super().save(*args, **kwargs)
+
+        # Update variant SKUs if product SKU changes or for the first time
+        self.update_variant_skus()
+
+    def update_variant_skus(self):
+        """
+        Check and update all variant SKUs to ensure they match the base product SKU.
+        If a variant SKU doesn't follow the 'PRODUCTSKU-R-M' format, it gets updated.
+        """
+        for variant in self.variants.all():
+            expected_variant_sku = f"{self.sku}-{variant.color[:1].upper()}-{variant.size[:1].upper()}"
+
+            if variant.sku != expected_variant_sku:
+                # Update the variant SKU to match the format
+                variant.sku = expected_variant_sku
+                variant.save()
 
 class ProductImages(models.Model):
     product = models.ForeignKey(Product,related_name='product_images',on_delete=models.CASCADE)
@@ -132,6 +162,7 @@ class ProductVariant(models.Model):
     product = models.ForeignKey(Product, related_name='variants', on_delete=models.CASCADE)
     color = models.CharField(max_length=50, blank=True, null=True)
     size = models.CharField(max_length=50, blank=True, null=True)
+    sku = models.CharField(max_length=20, unique=True, blank=True, null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     weight = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     dimensions = models.CharField(max_length=100, blank=True, null=True)
@@ -156,3 +187,26 @@ class ProductVariant(models.Model):
     def delete(self):
         self.is_active = False
         self.save()
+        
+    def save(self, *args, **kwargs):
+        # Validate uniqueness of the color and size combination for the product
+        from .utils import ProductValidation
+        variant_data = {
+            'color': self.color,
+            'size': self.size,
+        }
+        ProductValidation.validate_variant_uniqueness(self.product, variant_data)
+
+        # Generate SKU based on product SKU, color, and size
+        expected_sku = f"{self.product.sku}-{self.color[:1].upper()}-{self.size[:1].upper()}"
+
+        # Set SKU if not already set or if there's a mismatch
+        if not self.sku or self.sku != expected_sku:
+            self.sku = expected_sku
+
+        # Call the parent save method to persist the changes
+        super().save(*args, **kwargs)
+
+
+
+

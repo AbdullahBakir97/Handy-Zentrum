@@ -47,7 +47,7 @@ class ProductImagesInline(admin.TabularInline):
 class ProductVariantInline(admin.TabularInline):
     model = ProductVariant
     extra = 1
-    fields = ('color', 'size', 'price', 'weight', 'dimensions', 'stock', 'variant_group', 'is_active')
+    fields = ('color', 'size', 'price', 'sku', 'weight', 'dimensions', 'stock', 'variant_group', 'is_active')
     readonly_fields = ('stock',)
 
 
@@ -64,16 +64,16 @@ class ProductAdmin(admin.ModelAdmin):
         return obj.total_stock()
     total_stock.short_description = _("Total Stock")
 
-    def save_model(self, request, obj, form, change):
-        # Ensure unique SKU logic here if needed
-        super().save_model(request, obj, form, change)
+    # def save_model(self, request, obj, form, change):
+    #     # Ensure unique SKU logic here if needed
+    #     super().save_model(request, obj, form, change)
 
 admin.site.register(Product, ProductAdmin)
 
 class ProductVariantAdmin(admin.ModelAdmin):
-    list_display = ('product', 'color', 'size', 'price', 'stock', 'variant_group', 'is_active')
+    list_display = ('product', 'color', 'size', 'price', 'stock', 'sku', 'variant_group', 'is_active')
     list_filter = ('color', 'size', 'variant_group', 'is_active')
-    search_fields = ('product__name', 'color', 'size')
+    search_fields = ('product__name', 'sku', 'color', 'size')
     readonly_fields = ('stock',)
     
     def get_queryset(self, request):

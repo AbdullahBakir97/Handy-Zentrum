@@ -17,7 +17,7 @@ class SKUBase:
 
     def is_sku_unique(self, sku: str) -> bool:
         """
-        Check if the SKU is unique across all product variants.
+        Check if the SKU is unique across all products or variants.
         :param sku: SKU to check.
         :return: Boolean indicating uniqueness.
         """
@@ -29,50 +29,48 @@ class BaseSKUGenerator(SKUBase):
     Base SKU Generator responsible for generating base SKUs for products.
     """
 
-    def generate_sku(self, product, variant_data=None) -> str:
+    def generate_sku(self, product) -> str:
         """
         Generate SKU for a base product.
         :param product: The product instance.
         :return: Generated SKU for the base product.
         """
-        return self.generate_base_sku(product.name)
+        return self.generate_base_sku(product)
 
-    def generate_base_sku(self, product_name: str, length: int = 8) -> str:
+    def generate_base_sku(self, product: Product) -> str:
         """
-        Generate a base SKU using the product name and a random string.
-        :param product_name: The name of the product.
-        :param length: The length of the random part of the SKU.
+        Generate a base SKU using the product slug and an incremental number.
+        :param product: The product instance.
         :return: SKU string.
         """
-        base_slug = slugify(product_name)
-        random_str = ''.join(random.choices(string.ascii_uppercase + string.digits, k=length))
-        return f"{base_slug[:5].upper()}-{random_str}"
+        slug_part = slugify(product.name)[:5].upper()
+        # Find the latest product with the same base slug
+        last_product = Product.objects.filter(sku__startswith=slug_part).order_by('sku').last()
+
+        if last_product and last_product.sku[-3:].isdigit():
+            # Increment the numeric part of the SKU
+            last_number = int(last_product.sku[-3:]) + 1
+        else:
+            last_number = 1
+
+        return f"{slug_part}{str(last_number).zfill(3)}"
 
 
-class VariantSKUGenerator(BaseSKUGenerator):
+class VariantSKUGenerator(SKUBase):
     """
     Variant SKU Generator responsible for generating SKUs for product variants.
     """
 
-    def generate_sku(self, product, variant_data=None) -> str:
+    def generate_sku(self, product: Product, variant) -> str:
         """
-        Generate SKU for a product variant.
+        Generate SKU for a product variant by appending variant-specific data to the base SKU.
         :param product: The product instance.
-        :param variant_data: Optional dictionary containing variant fields.
-        :return: Generated SKU for the variant.
-        """
-        base_sku = self.generate_base_sku(product.name)
-        return self.generate_variant_sku(base_sku, variant_data)
-
-    def generate_variant_sku(self, base_sku: str, variant: ProductVariant) -> str:
-        """
-        Generate a variant SKU by appending variant-specific data to the base SKU.
-        :param base_sku: The base SKU of the product.
         :param variant: The product variant.
         :return: SKU string for the variant.
         """
-        color_code = (variant.color[:3] if variant.color else "00").upper()
-        size_code = (variant.size[:3] if variant.size else "00").upper()
+        base_sku = product.sku
+        color_code = (variant.color[:1] if variant.color else "0").upper()
+        size_code = (variant.size[:1] if variant.size else "0").upper()
         return f"{base_sku}-{color_code}-{size_code}"
 
 
