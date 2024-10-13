@@ -3,7 +3,7 @@ from django.forms import ValidationError
 from django.utils.text import slugify
 from taggit.managers import TaggableManager
 from django.utils.translation import gettext_lazy as _
-
+from .managers import BrandManager, CategoryManager, ProductImageManager, ProductManager, ProductVariantManager
 
 
 class Brand(models.Model):
@@ -11,6 +11,7 @@ class Brand(models.Model):
     description = models.TextField(blank=True, null=True)
     slug = models.SlugField(unique=True, max_length=255, blank=True, null=True)
     image = models.ImageField(upload_to='brand_images/', blank=True, null=True)
+    objects = BrandManager
     
     class Meta:
         ordering = ['name']
@@ -31,6 +32,7 @@ class Category(models.Model):
     slug = models.SlugField(unique=True, max_length=255, blank=True, null=True)
     parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.SET_NULL, related_name='child_categories')
     image = models.ImageField(upload_to='category_images/', blank=True, null=True)
+    objects = CategoryManager
     
     class Meta:
         ordering = ['name']
@@ -63,7 +65,7 @@ class Product(models.Model):
     )
     name = models.CharField(max_length=150)
     subtitle = models.TextField(max_length=500)
-    description = models.TextField(blank=True, null=True, max_length=100000)
+    description = models.TextField(blank=True, null=True, max_length=10000)
     category = models.ForeignKey(Category, 
             on_delete=models.CASCADE, 
             related_name='products_in_category'
@@ -82,7 +84,8 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
-
+    objects = ProductManager
+    
     class Meta:
         ordering = ['name']
         verbose_name = 'Product'
@@ -154,7 +157,8 @@ class Product(models.Model):
 class ProductImages(models.Model):
     product = models.ForeignKey(Product,related_name='product_images',on_delete=models.CASCADE)
     image = models.ImageField(upload_to='product_images/')
-
+    objects = ProductImageManager
+    
     def __str__(self):
         return str(self.product)
     
@@ -169,6 +173,7 @@ class ProductVariant(models.Model):
     stock = models.PositiveIntegerField(default=0)
     variant_group = models.CharField(max_length=50, blank=True, null=True)
     is_active = models.BooleanField(default=True)
+    objects = ProductVariantManager
     
     class Meta:
         unique_together = ['product', 'color', 'size']
