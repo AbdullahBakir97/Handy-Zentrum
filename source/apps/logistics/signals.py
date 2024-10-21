@@ -1,8 +1,10 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from .utils import adjust_stock_level
-from .models import Shipment, ReturnShipment, LogisticsInteraction
+
 from source.apps.inventory.models import InventoryItem
+
+from .models import LogisticsInteraction, ReturnShipment, Shipment
+from .utils import adjust_stock_level
 
 
 @receiver(post_save, sender=Shipment)

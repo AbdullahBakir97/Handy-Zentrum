@@ -1,8 +1,9 @@
-from django.db.models.signals import post_save, pre_save, post_delete
-from django.dispatch import receiver
-from .models import RepairOrder, Order, OrderItem
 import uuid
-from decimal import Decimal
+
+from django.db.models.signals import post_delete, post_save
+from django.dispatch import receiver
+
+from .models import OrderItem, RepairOrder
 
 
 @receiver(post_save, sender=OrderItem)

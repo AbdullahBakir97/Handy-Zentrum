@@ -1,14 +1,15 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
+
 from .controllers import (
+    FulfillmentController,
     OrderController,
     PaymentController,
-    ShippingController,
-    FulfillmentController,
     ReportingController,
+    ShippingController,
 )
 from .models import Order, RepairOrder
-from django.contrib import messages
 
 
 def repair_receipt_view(request, order_id):
@@ -45,7 +46,7 @@ class OrderDetailView(View):
     template_name = "orders/order_detail.html"
 
     def get(self, request, order_id, *args, **kwargs):
-        order = get_object_or_404(Order, id=order_id)
+        # order = get_object_or_404(Order, id=order_id)
         order_details = OrderController().get_order_details(order_id)
         return render(request, self.template_name, {"order": order_details})
 

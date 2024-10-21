@@ -1,13 +1,13 @@
-from django.shortcuts import render
 from rest_framework import viewsets
-from .models import InventoryItem, Warehouse, StockAdjustment, InventoryTransfer
+
+from .models import InventoryItem, InventoryTransfer, StockAdjustment, Warehouse
 from .serializers import (
     InventoryItemSerializer,
-    WarehouseSerializer,
-    StockAdjustmentSerializer,
     InventoryTransferSerializer,
+    StockAdjustmentSerializer,
+    WarehouseSerializer,
 )
-from .services import StockAdjustmentService, InventoryTransferService
+from .services import InventoryTransferService, StockAdjustmentService
 
 
 class WarehouseViewSet(viewsets.ModelViewSet):

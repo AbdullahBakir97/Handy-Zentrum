@@ -1,5 +1,6 @@
 from django import forms
-from .models import StockAdjustment, InventoryTransfer
+
+from .models import InventoryTransfer, StockAdjustment
 
 
 class StockAdjustmentForm(forms.ModelForm):

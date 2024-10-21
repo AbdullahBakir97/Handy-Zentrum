@@ -1,10 +1,10 @@
-from .models import Shipment, ReturnShipment
-from datetime import timedelta
-from django.utils import timezone
-from .utils import generate_tracking_number, calculate_estimated_arrival
 import requests
 from django.conf import settings
 from django.core.cache import cache
+from django.utils import timezone
+
+from .models import ReturnShipment, Shipment
+from .utils import calculate_estimated_arrival, generate_tracking_number
 
 
 class ShipmentService:
@@ -35,7 +35,6 @@ class ReturnService:
 
 
 class ShipmentTrackingService:
-
     @staticmethod
     def get_tracking_info(tracking_number):
         url = settings.LOGISTICS_TRACKING_URL_TEMPLATE.format(
@@ -46,7 +45,6 @@ class ShipmentTrackingService:
 
 
 class ShipmentCacheService:
-
     @staticmethod
     def get_tracking_info_cached(tracking_number):
         cache_key = f"tracking_info_{tracking_number}"

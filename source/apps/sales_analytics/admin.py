@@ -1,6 +1,7 @@
 from django.contrib import admin
-from django.contrib import admin
-from .models import SalesReport, SalesByProduct, SalesByCustomerSegment
+from django.db.models import Sum
+
+from .models import SalesByCustomerSegment, SalesByProduct, SalesReport
 
 
 class SalesByProductInline(admin.TabularInline):
@@ -41,21 +42,18 @@ class SalesReportAdmin(admin.ModelAdmin):
     actions = ["generate_monthly_report", "export_sales_data"]
 
     def generate_monthly_report(self, request, queryset):
-        self.message_user(request, f"Monthly report generation is in progress.")
+        self.message_user(request, "Monthly report generation is in progress.")
 
     generate_monthly_report.short_description = "Generate Monthly Sales Report"
 
     def export_sales_data(self, request, queryset):
-        self.message_user(request, f"Sales data exported successfully.")
+        self.message_user(request, "Sales data exported successfully.")
 
     export_sales_data.short_description = "Export Sales Data"
 
     def total_products_sold(self, obj):
         return (
-            obj.sales_by_product.aggregate(total=models.Sum("total_units_sold"))[
-                "total"
-            ]
-            or 0
+            obj.sales_by_product.aggregate(total=Sum("total_units_sold"))["total"] or 0
         )
 
     total_products_sold.short_description = "Total Products Sold"

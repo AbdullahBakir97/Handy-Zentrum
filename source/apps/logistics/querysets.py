@@ -1,7 +1,5 @@
 from django.db import models
-from django.db.models import Count, Sum, Q
 from django.utils import timezone
-from datetime import timedelta
 
 
 class ShipmentQuerySet(models.QuerySet):

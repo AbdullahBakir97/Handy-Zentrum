@@ -1,11 +1,14 @@
+from decimal import Decimal
+
+from django.core.validators import MinValueValidator
 from django.db import models
+from django.utils import timezone
+
+from source.apps.customers.models import Customer
 from source.apps.inventory.models import Warehouse
 from source.apps.products.models import Product
-from source.apps.customers.models import Customer
-from django.utils import timezone
-from decimal import Decimal
-from django.core.validators import MinValueValidator
-from .managers import RepairOrderManager, OrderManager
+
+from .managers import OrderManager, RepairOrderManager
 
 
 class RepairOrder(models.Model):

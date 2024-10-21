@@ -1,7 +1,8 @@
 # services/customer_service.py
 
-from ..models import Customer, CustomerInteraction, LoyaltyProgram
 from django.contrib.auth.models import User
+
+from ..models import Customer, CustomerInteraction, LoyaltyProgram
 
 
 class CustomerService:

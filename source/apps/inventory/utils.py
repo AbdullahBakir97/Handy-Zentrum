@@ -1,12 +1,4 @@
-from .models import (
-    Product,
-    InventoryItem,
-    StockAdjustment,
-    InventoryTransfer,
-    Warehouse,
-)
-import random
-import string
+from .models import InventoryItem, InventoryTransfer, Product
 
 
 def calculate_stock_value(inventory_items):
@@ -68,6 +60,7 @@ def bulk_import_products(product_data):
 
 def export_products_to_csv(queryset):
     import csv
+
     from django.http import HttpResponse
 
     response = HttpResponse(content_type="text/csv")

@@ -1,8 +1,9 @@
 from django.db import models
 from django.forms import ValidationError
 from django.utils.text import slugify
-from taggit.managers import TaggableManager
 from django.utils.translation import gettext_lazy as _
+from taggit.managers import TaggableManager
+
 from .managers import (
     BrandManager,
     CategoryManager,
@@ -133,7 +134,7 @@ class Product(models.Model):
         self.save()
 
     def save(self, *args, **kwargs):
-        regenerate_sku = False
+        # regenerate_sku = False
 
         # If the product already exists in the database
         if self.pk and Product.objects.filter(pk=self.pk).exists():
@@ -146,7 +147,7 @@ class Product(models.Model):
 
                 sku_generator = BaseSKUGenerator()
                 self.sku = sku_generator.generate_sku(self)
-                regenerate_sku = True  # Flag that SKU has been regenerated
+                # regenerate_sku = True  # Flag that SKU has been regenerated
 
         else:
             # First-time creation, generate slug and SKU if not set

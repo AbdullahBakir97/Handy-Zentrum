@@ -1,6 +1,7 @@
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
 from django.forms import ValidationError
+
 from source.apps.products.models import Product
 
 

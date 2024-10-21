@@ -1,17 +1,17 @@
 from django.urls import path
+
 from .views import (
+    OrderCancelView,
     OrderCreateView,
     OrderDetailView,
-    OrderCancelView,
-    PaymentProcessView,
-    OrderHistoryView,
-    ShipmentTrackingView,
     OrderFulfillmentView,
+    OrderHistoryView,
     OrderReportView,
-    repair_receipt_view,
+    PaymentProcessView,
+    ShipmentTrackingView,
     blank_receipt_view,
+    repair_receipt_view,
 )
-
 
 urlpatterns = [
     path(

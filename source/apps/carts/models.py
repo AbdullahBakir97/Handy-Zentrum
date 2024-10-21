@@ -1,13 +1,16 @@
-from django.db import models
-from source.apps.products.models import Product
-from source.apps.customers.models import Customer
-from django.utils import timezone
+import uuid
 from datetime import timedelta
 from decimal import Decimal
+
 from django.core.validators import MinValueValidator
+from django.db import models
 from django.urls import reverse
+from django.utils import timezone
+
+from source.apps.customers.models import Customer
+from source.apps.products.models import Product
+
 from .managers import CartManager
-import uuid
 
 
 class Cart(models.Model):

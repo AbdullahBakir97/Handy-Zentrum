@@ -1,6 +1,5 @@
-# controllers.py
-from .services import InventoryService, TransferService, StockAdjustmentService
 from .models import Product, Warehouse
+from .services import InventoryService, StockAdjustmentService, TransferService
 
 
 class LogisticsController:

@@ -1,7 +1,8 @@
 import os
+
 import django
 
-from source.apps.logistics.models import Shipment, ReturnShipment, LogisticsInteraction
+from source.apps.logistics.models import LogisticsInteraction, ReturnShipment, Shipment
 from source.apps.products.models import Category
 
 # Set the DJANGO_SETTINGS_MODULE to point to your project's settings
@@ -10,23 +11,24 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "project.settings")
 django.setup()
 
 import random
-from faker import Faker
+
 from django.contrib.auth.models import User
+from faker import Faker
+
+from source.apps.customers.models import Customer, CustomerInteraction, LoyaltyProgram
 from source.apps.inventory.models import (
-    Product,
-    Warehouse,
     InventoryItem,
-    StockAdjustment,
     InventoryTransfer,
+    Product,
+    StockAdjustment,
+    Warehouse,
 )
 from source.apps.orders.models import Order, OrderItem, Payment
-from source.apps.customers.models import Customer, CustomerInteraction, LoyaltyProgram
 from source.apps.sales_analytics.models import (
-    SalesReport,
-    SalesByProduct,
     SalesByCustomerSegment,
+    SalesByProduct,
+    SalesReport,
 )
-
 
 faker = Faker()
 

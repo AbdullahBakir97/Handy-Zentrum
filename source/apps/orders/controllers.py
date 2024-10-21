@@ -1,12 +1,12 @@
 from .services import (
-    OrderService,
-    PaymentService,
-    ShippingService,
+    CachingService,
     FulfillmentService,
     NotificationService,
-    ReportingService,
-    CachingService,
+    OrderService,
+    PaymentService,
     RepairCalculationService,
+    ReportingService,
+    ShippingService,
 )
 
 
@@ -48,17 +48,17 @@ class OrderController:
         return self.order_service.get_order_history(customer_id)
 
 
-class PaymentController:
-    def __init__(self):
-        self.payment_service = PaymentService()
-
-    def process_payment(self, order_id, payment_method):
-        self.payment_service.process_payment(order_id, payment_method)
-        return {"status": "Payment processed successfully"}
-
-    def refund_payment(self, order_id):
-        self.payment_service.refund_payment(order_id)
-        return {"status": "Payment refunded successfully"}
+# class PaymentController:
+#     def __init__(self):
+#         self.payment_service = PaymentService()
+#
+#     def process_payment(self, order_id, payment_method):
+#         self.payment_service.process_payment(order_id, payment_method)
+#         return {"status": "Payment processed successfully"}
+#
+#     def refund_payment(self, order_id):
+#         self.payment_service.refund_payment(order_id)
+#         return {"status": "Payment refunded successfully"}
 
 
 class PaymentController:
@@ -70,10 +70,12 @@ class PaymentController:
     def process_payment(self, order_id, payment_method):
         self.payment_service.process_payment(order_id, payment_method)
         self.caching_service.invalidate_cache(order_id)
+        return {"status": "Payment processed successfully"}
 
     def refund_payment(self, order_id):
         self.payment_service.refund_payment(order_id)
         self.caching_service.invalidate_cache(order_id)
+        return {"status": "Payment refunded successfully"}
 
     def validate_payment(self, payment_data):
         return self.payment_service.validate_payment_method(payment_data)

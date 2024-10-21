@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Warehouse, InventoryItem, StockAdjustment, InventoryTransfer
+
+from .models import InventoryItem, InventoryTransfer, StockAdjustment, Warehouse
 
 
 class InventoryItemInline(admin.TabularInline):

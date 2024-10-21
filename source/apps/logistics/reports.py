@@ -1,6 +1,7 @@
 from django.db import models
-from .models import Shipment, LogisticsInteraction, ReturnShipment
-from django.db.models import Count, Sum, Q
+from django.db.models import Count
+
+from .models import LogisticsInteraction, ReturnShipment, Shipment
 
 
 class LogisticsReports:

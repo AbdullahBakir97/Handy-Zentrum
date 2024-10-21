@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Customer, Address, CustomerInteraction, LoyaltyProgram
+
+from .models import Address, Customer, CustomerInteraction, LoyaltyProgram
 
 
 class AddressSerializer(serializers.ModelSerializer):

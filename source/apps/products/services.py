@@ -1,5 +1,5 @@
 from .models import Product, ProductVariant
-from .utils import SKUBase, ProductValidation, BaseSKUGenerator, VariantSKUGenerator
+from .utils import BaseSKUGenerator, ProductValidation, VariantSKUGenerator
 
 
 class ProductService:
@@ -93,6 +93,7 @@ class CSVExportService:
     @staticmethod
     def export_products_to_csv(queryset):
         import csv
+
         from django.http import HttpResponse
 
         response = HttpResponse(content_type="text/csv")
@@ -119,7 +120,8 @@ def create_product_with_variants(data):
     )
 
     # Generate the SKU for the product
-    product.sku = generate_product_sku(product)
+    # TODO Create generate_product_sku function
+    # product.sku = generate_product_sku(product)
     product.save()
 
     # Create variants for the product
@@ -132,5 +134,6 @@ def create_product_with_variants(data):
             stock=variant_data.get("stock"),
         )
         # Generate SKU for variant
-        variant.sku = generate_variant_sku(product.sku, variant)
+        # TODO Create generate_variant_sku function
+        # variant.sku = generate_variant_sku(product.sku, variant)
         variant.save()

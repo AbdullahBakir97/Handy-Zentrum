@@ -1,5 +1,6 @@
-from .querysets import InventoryItemQuerySet, WarehouseQuerySet
 from django.db import models
+
+from .querysets import InventoryItemQuerySet, WarehouseQuerySet
 
 
 class InventoryItemManager(models.Manager):

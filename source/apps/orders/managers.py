@@ -1,6 +1,6 @@
-from .querysets import OrderQuerySet, RepairOrderQuerySet
 from django.db import models
-from django.utils import timezone
+
+from .querysets import OrderQuerySet, RepairOrderQuerySet
 
 
 class OrderManager(models.Manager):

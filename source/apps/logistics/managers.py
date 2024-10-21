@@ -1,8 +1,9 @@
 from django.db import models
+
 from .querysets import (
-    ShipmentQuerySet,
     LogisticsInteractionQuerySet,
     ReturnShipmentQuerySet,
+    ShipmentQuerySet,
 )
 
 

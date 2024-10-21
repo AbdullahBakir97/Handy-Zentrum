@@ -1,8 +1,10 @@
+from decimal import Decimal
+
 from django import forms
-from .models import RepairOrder, Order, OrderItem, Payment
 from django.core.exceptions import ValidationError
 from django.utils import timezone
-from decimal import Decimal
+
+from .models import Order, OrderItem, Payment, RepairOrder
 
 
 class RepairOrderForm(forms.ModelForm):
@@ -145,7 +147,7 @@ class PaymentForm(forms.ModelForm):
         return payment_status
 
     def process_payment(self):
-        payment_status = self.cleaned_data.get("payment_status")
+        # payment_status = self.cleaned_data.get("payment_status")
         if self.instance.order.status == "canceled":
             raise ValidationError("Cannot process payment for a canceled order.")
         self.instance.payment_status = "paid"

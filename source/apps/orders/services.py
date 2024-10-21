@@ -1,23 +1,26 @@
-from .models import RepairOrder, Order, Payment
-from source.apps.logistics.models import Shipment
-from django.db.models import Sum
 from decimal import Decimal
-from django.utils import timezone
+
 from django.core.cache import cache
+from django.db.models import Sum
+from django.utils import timezone
+
+from source.apps.inventory.services import InventoryService
+from source.apps.logistics.models import Shipment
+
+from .models import Order, Payment, RepairOrder
 from .utils import (
-    is_order_cancelable,
+    allocate_inventory,
     apply_payment_discount,
-    validate_payment_details,
     calculate_shipping_cost,
     check_inventory_availability,
-    allocate_inventory,
+    format_order_summary,
+    generate_order_report,
+    is_order_cancelable,
+    send_order_cancellation_alert,
     send_order_confirmation,
     send_order_shipment_notification,
-    send_order_cancellation_alert,
-    generate_order_report,
-    format_order_summary,
+    validate_payment_details,
 )
-from source.apps.inventory.services import InventoryService
 
 
 class RepairCalculationService:

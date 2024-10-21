@@ -1,6 +1,7 @@
-from rest_framework import serializers
-from .models import Brand, Category, Product, ProductImages, ProductVariant
 from django.utils.text import slugify
+from rest_framework import serializers
+
+from .models import Brand, Category, Product, ProductImages, ProductVariant
 
 
 # Brand Serializer

@@ -1,9 +1,11 @@
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-from .models import Product, ProductVariant
-from .services import ProductService
-from .utils import BaseSKUGenerator, VariantSKUGenerator, ProductValidation
-import logging
+# import logging
+#
+# from django.db.models.signals import post_save
+# from django.dispatch import receiver
+#
+# from .models import Product, ProductVariant
+# from .services import ProductService
+# from .utils import BaseSKUGenerator, ProductValidation, VariantSKUGenerator
 
 # logger = logging.getLogger(__name__)
 

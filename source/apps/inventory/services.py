@@ -42,6 +42,7 @@ class StockAdjustmentService:
         inventory_item.save()
         return adjustment
 
+    @staticmethod
     def adjust_stock(inventory_item, adjustment_type, quantity, reason, user):
         if adjustment_type == "add":
             inventory_item.quantity += quantity
@@ -77,6 +78,7 @@ class TransferService:
         transfer.save()
         return transfer
 
+    @staticmethod
     def transfer_stock(product, from_warehouse, to_warehouse, quantity, user):
         if InventoryItem.objects.filter(
             product=product, location=from_warehouse, quantity__gte=quantity

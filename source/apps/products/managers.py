@@ -1,5 +1,6 @@
-from .querysets import ProductQuerySet
 from django.db import models
+
+from .querysets import ProductQuerySet
 
 
 class BrandManager(models.Manager):

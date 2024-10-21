@@ -1,12 +1,12 @@
 import uuid
 from decimal import Decimal
+
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 
-
-def calculate_order_total(order):
-    total = sum(item.total_price for item in order.items.all())
-    return total
+# def calculate_order_total(order):
+#     total = sum(item.total_price for item in order.items.all())
+#     return total
 
 
 def generate_invoice(order):
@@ -24,14 +24,14 @@ def generate_order_number():
     return str(uuid.uuid4())
 
 
-def calculate_order_total(order_items):
-    """Calculates the total cost of the order, including taxes and discounts."""
-    total = Decimal("0.00")
-    for item in order_items:
-        total += item.total_price
-    # Add taxes, discounts, or any other applicable fees
-    # Example: total += apply_tax(total)
-    return total
+# def calculate_order_total(order_items):
+#     """Calculates the total cost of the order, including taxes and discounts."""
+#     total = Decimal("0.00")
+#     for item in order_items:
+#         total += item.total_price
+#     # Add taxes, discounts, or any other applicable fees
+#     # Example: total += apply_tax(total)
+#     return total
 
 
 def validate_order_data(order_data):
@@ -107,7 +107,7 @@ def get_shipping_options(destination):
 
 def calculate_shipping_cost(order_items, destination):
     """Calculates the shipping cost based on the destination and items."""
-    weight = sum(item.product.weight for item in order_items)
+    # weight = sum(item.product.weight for item in order_items)
     # Calculate cost based on weight and destination
     if destination == "international":
         return Decimal("50.00")  # Example fixed cost for international shipping

@@ -1,5 +1,6 @@
-from .models import InventoryItem, StockAdjustment, InventoryTransfer
 from django.db.models import Count, Sum
+
+from .models import InventoryItem, InventoryTransfer, StockAdjustment
 
 
 def inventory_report():

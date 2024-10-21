@@ -1,5 +1,6 @@
-from .models import Order
 from django.db.models import Sum
+
+from .models import Order
 from .services import RepairCalculationService
 
 
@@ -12,7 +13,7 @@ def generate_daily_report(shop=None):
     Total Price: {daily_totals['total_price']}
     Total Expenses: {daily_totals['total_expenses']}
     Total Profit: {daily_totals['total_profit']}
-    
+
     Profit for Owner: {daily_totals['profit_owner']}
     Profit for Worker: {daily_totals['profit_worker']}
 

@@ -1,7 +1,7 @@
 from django.contrib import admin
-from django.contrib import admin
-from .models import Shipment, LogisticsInteraction, ReturnShipment
 from django.utils import timezone
+
+from .models import LogisticsInteraction, ReturnShipment, Shipment
 
 
 class LogisticsInteractionInline(admin.TabularInline):

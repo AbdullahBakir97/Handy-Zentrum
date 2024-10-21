@@ -1,6 +1,7 @@
+from datetime import timedelta
+
 from django.db import models
 from django.utils import timezone
-from datetime import timedelta
 
 
 class CartQuerySet(models.QuerySet):

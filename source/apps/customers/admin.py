@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Customer, CustomerInteraction, LoyaltyProgram, Address
+
+from .models import Address, Customer, CustomerInteraction, LoyaltyProgram
 
 
 @admin.register(Customer)

@@ -43,8 +43,9 @@ class CustomerInteractionQuerySet(models.QuerySet):
         return self.filter(interaction_type="complaint")
 
     def within_last_month(self):
-        from django.utils import timezone
         from datetime import timedelta
+
+        from django.utils import timezone
 
         one_month_ago = timezone.now() - timedelta(days=30)
         return self.filter(interaction_date__gte=one_month_ago)

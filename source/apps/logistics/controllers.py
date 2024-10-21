@@ -1,5 +1,4 @@
-from .models import Shipment, ReturnShipment
-from .services import ShipmentService, ReturnService
+from .services import ReturnService, ShipmentService
 from .utils import adjust_stock_level
 
 

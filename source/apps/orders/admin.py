@@ -1,10 +1,11 @@
 from django.contrib import admin
-from django.urls import path, reverse
 from django.template.response import TemplateResponse
+from django.urls import path, reverse
+from django.utils.html import format_html
+
+from .filters import CompletedFilter, SentToOtherShopFilter, UnpaidFilter
 from .models import Order, OrderItem, Payment, RepairOrder
 from .services import RepairCalculationService
-from django.utils.html import format_html
-from .filters import UnpaidFilter, CompletedFilter, SentToOtherShopFilter
 
 
 @admin.register(RepairOrder)

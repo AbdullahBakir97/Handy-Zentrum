@@ -1,5 +1,6 @@
+from django.db.models import Avg, Count
+
 from .models import Customer, LoyaltyProgram
-from django.db.models import Count, Avg
 
 
 def customer_kpis():
@@ -27,8 +28,9 @@ def interaction_report():
 
 
 def customer_retention_report():
-    from django.utils import timezone
     from datetime import timedelta
+
+    from django.utils import timezone
 
     one_year_ago = timezone.now() - timedelta(days=365)
     active_customers = Customer.objects.filter(

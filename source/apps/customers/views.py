@@ -1,23 +1,21 @@
+from controllers.customer_controller import CustomerController
 from django.shortcuts import render
-from rest_framework import viewsets, generics
+from rest_framework import generics, viewsets
+
+from .forms import CustomerForm
 from .models import Customer, CustomerInteraction, LoyaltyProgram
 from .serializers import (
-    CustomerSerializer,
     CustomerInteractionSerializer,
+    CustomerSerializer,
     LoyaltyProgramSerializer,
 )
-from controllers.customer_controller import CustomerController
-from services.customer_service import CustomerService
-from .forms import CustomerForm
 
 
 def customer_create_view(request):
     if request.method == "POST":
         form = CustomerForm(request.POST)
         if form.is_valid():
-            customer = CustomerController.create_customer_with_loyalty(
-                form.cleaned_data
-            )
+            CustomerController.create_customer_with_loyalty(form.cleaned_data)
             # Redirect or render success
     else:
         form = CustomerForm()

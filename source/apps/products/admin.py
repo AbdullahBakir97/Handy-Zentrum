@@ -1,9 +1,8 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Brand, Category, Product, ProductImages, ProductVariant
-
-# from taggit.admin import TaggitCounter
 from django.utils.translation import gettext_lazy as _
+
+from .models import Brand, Category, Product, ProductImages, ProductVariant
 
 
 class BrandAdmin(admin.ModelAdmin):

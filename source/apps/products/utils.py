@@ -1,12 +1,15 @@
 import csv
-from django.db import models
-from django.core.exceptions import ValidationError
-from .models import Product, ProductVariant
-from django.utils.text import slugify
-from django.core.cache import cache
-from django.core.mail import send_mail
-from source.apps.inventory.models import Warehouse
 import logging
+
+from django.core.cache import cache
+from django.core.exceptions import ValidationError
+from django.core.mail import send_mail
+from django.db import models
+from django.utils.text import slugify
+
+from source.apps.inventory.models import Warehouse
+
+from .models import Product, ProductVariant
 
 logger = logging.getLogger(__name__)
 
@@ -67,7 +70,8 @@ class VariantSKUGenerator(SKUBase):
     Variant SKU Generator responsible for generating SKUs for product variants.
     """
 
-    def generate_sku(self, product: Product, variant) -> str:
+    @staticmethod
+    def generate_sku(product: Product, variant) -> str:
         """
         Generate SKU for a product variant by appending variant-specific data to the base SKU.
         :param product: The product instance.
@@ -151,7 +155,7 @@ def create_product_variants_in_bulk(product, variants_data):
     variants = [
         ProductVariant(
             product=product,
-            sku=generate_sku(product, variant),
+            sku=VariantSKUGenerator.generate_sku(product, variant),
             color=variant["color"],
             size=variant["size"],
             price=calculate_variant_price(product, variant.get("price")),
@@ -170,7 +174,8 @@ def bulk_update_variant_prices(variants, new_price, user):
     for variant in variants:
         variant.price = new_price
         variant.save()
-        log_variant_change(variant, "bulk price update", user)
+        # TODO Create log_variant_change function
+        # log_variant_change(variant, "bulk price update", user)
 
 
 def bulk_update_variant_stock(variants, new_stock, user):
@@ -180,7 +185,8 @@ def bulk_update_variant_stock(variants, new_stock, user):
     for variant in variants:
         variant.stock = new_stock
         variant.save()
-        log_variant_change(variant, "bulk stock update", user)
+        # TODO Create log_variant_change function
+        # log_variant_change(variant, "bulk stock update", user)
 
 
 CACHE_TIMEOUT = 60 * 15  # Cache for 15 minutes

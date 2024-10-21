@@ -1,5 +1,6 @@
 from django import forms
 from django.utils.text import slugify
+
 from .models import Brand, Category, Product, ProductImages, ProductVariant
 
 
