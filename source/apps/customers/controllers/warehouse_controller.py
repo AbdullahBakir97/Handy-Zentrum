@@ -1,6 +1,5 @@
 # controllers/warehouse_controller.py
-
-from services.warehouse_service import WarehouseService
+from source.apps.customers.services.warehouse_service import WarehouseService
 
 
 class WarehouseController:

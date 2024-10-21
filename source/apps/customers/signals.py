@@ -1,9 +1,9 @@
-from django.db.models.signals import post_save, pre_save, pre_delete
-from django.dispatch import receiver
 from django.contrib.auth.models import User
-from .models import Customer, CustomerInteraction, LoyaltyProgram
 from django.core.mail import send_mail
-from .helpers.utils import calculate_loyalty_tier
+from django.db.models.signals import post_save, pre_delete
+from django.dispatch import receiver
+
+from .models import Customer, CustomerInteraction, LoyaltyProgram
 
 
 @receiver(post_save, sender=User)

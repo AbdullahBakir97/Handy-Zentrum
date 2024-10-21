@@ -1,5 +1,6 @@
 import re
-from ..models import Customer, LoyaltyProgram
+
+from source.apps.customers.models import Customer
 
 
 def format_phone_number(phone_number):
@@ -72,6 +73,7 @@ def bulk_import_customers(customer_data):
 
 def export_customers_to_csv(queryset):
     import csv
+
     from django.http import HttpResponse
 
     response = HttpResponse(content_type="text/csv")

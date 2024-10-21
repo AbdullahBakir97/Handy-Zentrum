@@ -1,5 +1,6 @@
 from django import forms
-from .models import Customer, CustomerInteraction, LoyaltyProgram, Address
+
+from .models import Address, Customer, CustomerInteraction, LoyaltyProgram
 
 
 class CustomerForm(forms.ModelForm):
@@ -22,7 +23,7 @@ class CustomerForm(forms.ModelForm):
     def clean_phone_number(self):
         phone_number = self.cleaned_data.get("phone_number")
         # Assuming format_phone_number is a utility function
-        from .helpers.utils import format_phone_number
+        from source.layer.helpers.utils import format_phone_number
 
         return format_phone_number(phone_number)
 
