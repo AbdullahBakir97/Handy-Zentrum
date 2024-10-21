@@ -11,8 +11,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 import os
-from django.urls import path
 from pathlib import Path
+
+from django.urls import path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,7 +38,6 @@ BACKEND_APPS = [
     "source.apps.inventory.apps.InventoryConfig",
     "source.apps.logistics.apps.LogisticsConfig",
     "source.apps.orders.apps.OrdersConfig",
-    "source.apps.taggit.apps.TaggitConfig",
     "source.apps.products.apps.ProductsConfig",
     "source.apps.sales_analytics.apps.SalesAnalyticsConfig",
 ]
@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "django_extensions",
     "rest_framework",
     "faker",
+    "taggit",
 ]
 
 INSTALLED_APPS += BACKEND_APPS
