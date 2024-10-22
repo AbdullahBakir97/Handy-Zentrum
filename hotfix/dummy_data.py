@@ -268,7 +268,7 @@ def create_sales_reports(products, n=10):
 
 
 # Execute the data creation
-def generate_dummy_data():
+if __name__ == "__main__":
     users = create_users(10)
     categories = create_categories()
     products = create_products(categories)
@@ -286,7 +286,3 @@ def generate_dummy_data():
     create_logistics_interactions(shipments)
     create_return_shipments(shipments)
     create_sales_reports(products)
-
-
-# Call the function to populate the database with dummy data
-generate_dummy_data()
