@@ -9,7 +9,7 @@ class BrandAdmin(admin.ModelAdmin):
     list_display = ('name', 'slug', 'image_tag', 'description')
     search_fields = ('name',)
     prepopulated_fields = {'slug': ('name',)}
-    readonly_fields = ('slug', 'image_tag')
+    readonly_fields = ('image_tag',)
     
     def image_tag(self, obj):
         if obj.image:
@@ -25,7 +25,7 @@ class CategoryAdmin(admin.ModelAdmin):
     search_fields = ('name',)
     prepopulated_fields = {'slug': ('name',)}
     list_filter = ('parent',)
-    readonly_fields = ('slug', 'image_tag')
+    readonly_fields = ('image_tag',)
     
     def image_tag(self, obj):
         if obj.image:
@@ -52,14 +52,20 @@ class ProductVariantInline(admin.TabularInline):
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'brand', 'category', 'base_price', 'flag', 'slug', 'sku', 'is_active', 'created_at')
+    list_display = ('name', 'brand', 'category', 'base_price', 'image_tag', 'flag', 'slug', 'sku', 'is_active', 'created_at')
     list_filter = ('brand', 'category', 'flag', 'is_active', 'created_at')
     search_fields = ('name', 'sku', 'description')
-    prepopulated_fields = {'slug': ('name',)}  # Prepopulate slug from name
-    readonly_fields = ('total_stock',)  # Remove 'slug' from readonly if it is auto-generated in the model
+    prepopulated_fields = {'slug': ('name',)}
+    readonly_fields = ('total_stock','image_tag',)
     inlines = [ProductImagesInline, ProductVariantInline]
     # filter_horizontal = ('tags',)
 
+    def image_tag(self, obj):
+        if obj.image:
+            return format_html('<img src="{}" style="width: 50px; height: 50px;" />', obj.image.url)
+        return "-"
+    image_tag.short_description = 'Image'
+    
     def total_stock(self, obj):
         return obj.total_stock()
     total_stock.short_description = _("Total Stock")
