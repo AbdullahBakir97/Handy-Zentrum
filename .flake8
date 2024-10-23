@@ -1,0 +1,5 @@
+[flake8]
+max_line_length = 120
+ignore = W503,C814,T000,VNE001, E231, RST304, D412, RST203, A003, D107, D100, D101, D102 D103, D104, D105, D106, VNE003, B902, T201
+inline-quotes = double
+exclude = migrations/ manage.py /migrations .venv/ venv/ fun_and_curious/settings/* settings.py dummy_data.py
